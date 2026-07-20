@@ -27,9 +27,8 @@ app.post('/chat', async (req, res) => {
                         content: prompt
                     }
                 ],
-                temperature: 1,
-                top_p: 0.95,
-                max_tokens: 16384
+                temperature: 0.7,
+                max_tokens: 2048
             },
             {
                 headers: {
@@ -46,7 +45,6 @@ app.post('/chat', async (req, res) => {
         });
 
     } catch (error) {
-
         console.error(
             "NVIDIA DeepSeek API Error:",
             error.response?.data || error.message
@@ -57,7 +55,6 @@ app.post('/chat', async (req, res) => {
         });
     }
 });
-
 
 app.listen(process.env.PORT || 3000, () => {
     console.log("Server running");
