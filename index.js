@@ -45,16 +45,25 @@ app.post('/chat', async (req, res) => {
         });
 
     } catch (error) {
+
         console.error(
             "NVIDIA DeepSeek API Error:",
             error.response?.data || error.message
         );
+
+        // NVIDIA server is busy
+        if (error.response?.status === 503) {
+            return res.status(503).json({
+                error: "AI is busy, try again in a few seconds"
+            });
+        }
 
         res.status(500).json({
             error: "Failed to connect to DeepSeek"
         });
     }
 });
+
 
 app.listen(process.env.PORT || 3000, () => {
     console.log("Server running");
