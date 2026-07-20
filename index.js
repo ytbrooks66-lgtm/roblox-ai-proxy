@@ -12,42 +12,52 @@ app.post('/chat', async (req, res) => {
         const { prompt } = req.body;
 
         if (!prompt) {
-            return res.status(400).json({ error: "Missing prompt" });
+            return res.status(400).json({
+                error: "Missing prompt"
+            });
         }
 
         const response = await axios.post(
-            `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
+            "https://integrate.api.nvidia.com/v1/chat/completions",
             {
-                contents: [
+                model: "deepseek-ai/deepseek-v4-flash",
+                messages: [
                     {
-                        parts: [
-                            {
-                                text: prompt
-                            }
-                        ]
+                        role: "user",
+                        content: prompt
                     }
-                ]
+                ],
+                temperature: 1,
+                top_p: 0.95,
+                max_tokens: 16384
             },
             {
                 headers: {
+                    "Authorization": `Bearer ${process.env.NVIDIA_API_KEY}`,
                     "Content-Type": "application/json"
                 }
             }
         );
 
-        res.json(response.data);
+        const answer = response.data.choices[0].message.content;
+
+        res.json({
+            answer: answer
+        });
 
     } catch (error) {
+
         console.error(
-            "Gemini API Error:",
+            "NVIDIA DeepSeek API Error:",
             error.response?.data || error.message
         );
 
         res.status(500).json({
-            error: "Failed to connect to Gemini API"
+            error: "Failed to connect to DeepSeek"
         });
     }
 });
+
 
 app.listen(process.env.PORT || 3000, () => {
     console.log("Server running");
