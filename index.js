@@ -16,19 +16,20 @@ app.post('/chat', async (req, res) => {
         }
 
         const response = await axios.post(
-            'https://api.x.ai/v1/chat/completions',
+            `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
             {
-                model: "grok-3-mini",
-                messages: [
+                contents: [
                     {
-                        role: "user",
-                        content: prompt
+                        parts: [
+                            {
+                                text: prompt
+                            }
+                        ]
                     }
                 ]
             },
             {
                 headers: {
-                    Authorization: `Bearer ${process.env.GROK_API_KEY}`,
                     "Content-Type": "application/json"
                 }
             }
@@ -38,12 +39,12 @@ app.post('/chat', async (req, res) => {
 
     } catch (error) {
         console.error(
-            "Grok API Error:",
+            "Gemini API Error:",
             error.response?.data || error.message
         );
 
         res.status(500).json({
-            error: "Failed to connect to Grok API"
+            error: "Failed to connect to Gemini API"
         });
     }
 });
